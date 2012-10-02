@@ -61,7 +61,8 @@ public class GuaranteedTimeoutConnection {
 	/**
      * @param InputStreamCallback
      * @param URL
-     * Your inputStreamCallback will always be called! It will either return the actual inputStream or null and an exception
+     * Your inputStreamCallback will always be called! It will either return the actual inputStream or null and an exception.
+     * This method creates a thread and posts to the supplied callback instead of returning the inputStream; please consider this during your development.
      */
 	public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url) throws IOException {
 		mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
