@@ -1,5 +1,6 @@
 GuaranteedTimeoutConnection
 ===========================
+<img src="http://mindthis.ca/wp-content/uploads/2011/12/timeout.jpg"/>
 
 A wrapper class around HttpURLConnection that guarantees a specific timeout. 
 <br><br>
@@ -35,5 +36,4 @@ There's 4 public methods:
 After the callback is hit in the openConnection method, you'll likely want a reference to the URLConnection which can be retrieved using one of the available public getters.<br><br>
 
 <b>Warnings</b><br>
-Be cautios that getInputStream and openConnection both create a thread.
-
+Be cautios that the constructor creates a handler! Make sure you either call the constructor from the UI thread, or use Looper properly.
