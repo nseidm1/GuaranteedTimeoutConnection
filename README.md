@@ -1,5 +1,6 @@
 GuaranteedTimeoutConnection
 ===========================
+<img src="http://mindthis.ca/wp-content/uploads/2011/12/timeout.jpg"/>
 
 A wrapper class around HttpURLConnection that guarantees a specific timeout. 
 <br><br>
