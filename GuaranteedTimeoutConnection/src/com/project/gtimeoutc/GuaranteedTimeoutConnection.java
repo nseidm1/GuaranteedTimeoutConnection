@@ -10,12 +10,10 @@ import android.os.Handler;
 
 /**
  * @author Noah Seidman
- * This library creates an HttpURLConnection with or without SSL; use the withSSL boolean in the constructor to specify.
- * You can modify the HttpsURLConnection using the respective get method, clearly if you want to specify a custom socket factory this is needed.
  */
 public class GuaranteedTimeoutConnection {
 	private int mMilliseconds;
-	private Thread mInputStreamGettter;
+	private Thread mOpenConnectionThread;
 	private boolean mUseSSL;
 	private Handler mHandler = new Handler();
 	private HttpURLConnection mHttpUrlConnection;
@@ -24,12 +22,14 @@ public class GuaranteedTimeoutConnection {
 		@Override
 		public void run(){
 			mHttpUrlConnection.disconnect();
-			mInputStreamGettter.interrupt();
+			mOpenConnectionThread.interrupt();
 		}
 	};
     /**
+     * This library creates an HttpURLConnection with or without SSL; use the withSSL boolean in the constructor to specify.
+     * You can modify the HttpsURLConnection using the respective get method, clearly if you want to specify a custom socket factory this is needed.
      * @param milliseconds
-     * Specify your guaranteed timeout.
+     * Specify your guaranteed timeout and if ssl will be used.
      */
 	public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL) {
 		System.setProperty("http.keepAlive", "false");
@@ -59,14 +59,15 @@ public class GuaranteedTimeoutConnection {
 		return mHttpsUrlConnection;
 	}
 	/**
-     * @param InputStreamCallback
-     * @param URL
-     * Your inputStreamCallback will always be called! It will either return the actual inputStream or null and an exception.
-     * This method creates a thread and posts to the supplied callback instead of returning the inputStream; please consider this during your development.
-     */
-	public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url) throws IOException {
+	 * This method creates a thread and posts to the supplied callback instead of returning the inputStream directly from the method; please consider this during your development.
+	 * @param inputStreamCallback
+	 * The InputStreamCallback will always be called! It will either return the actual inputStream or null and an exception.
+	 * @param url
+	 * Supply the url for the connection.
+	 */
+	public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url) {
 		mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
-		mInputStreamGettter = new Thread()
+		mOpenConnectionThread = new Thread()
 		{
 			@Override
 			public void run()
@@ -95,9 +96,48 @@ public class GuaranteedTimeoutConnection {
 					}
 				} catch (IOException e) {
 					inputStreamCallback.getInputStream(null, e);
+				} catch (NullPointerException e) {
+					inputStreamCallback.getInputStream(null, e);
+				} catch (Exception e) {
+					inputStreamCallback.getInputStream(null, e);
 				}
 			}
 		};
-		mInputStreamGettter.start();
+		mOpenConnectionThread.start();
+	}
+	/**
+	 * 
+	 * This method creates a thread and posts to the supplied callback instead of returning the inputStream; please consider this during your development.
+	 * @param openConnectionCallback
+	 * The OpenConnectionCallback will always be called. It will pass true and false if the connection succeeds or fails to open. You can subsequently use the get methods to obtain a reference to the HttpURLConnection.
+	 * @param url
+	 * Supply the url for the connection.
+	 */
+	public void openConnection(final OpenConnectionCallback openConnectionCallback, final URL url) {
+		mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
+		mOpenConnectionThread = new Thread()
+		{
+			@Override
+			public void run()
+			{
+				try {
+					if (mUseSSL)
+					{
+						mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
+						mHttpsUrlConnection.connect();
+					}
+					else
+					{
+						mHttpUrlConnection = (HttpURLConnection) url.openConnection();
+						mHttpUrlConnection.connect();
+					}
+					mHandler.removeCallbacks(mTimeoutRunnable);
+					openConnectionCallback.connectionOpened(true);
+				} catch (Exception e) {
+					openConnectionCallback.connectionOpened(false);
+				}
+			}
+		};
+		mOpenConnectionThread.start();
 	}
 }
