@@ -31,7 +31,9 @@ public class GuaranteedTimeoutConnection
      * to specify a custom socket factory this is needed.
      * 
      * @param milliseconds
-     *            Specify your guaranteed timeout and if ssl will be used.
+     *            Specify your guaranteed timeout.
+     * @param useSSL
+     *            Specify if SSL will be used.
      */
     public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL)
     {
