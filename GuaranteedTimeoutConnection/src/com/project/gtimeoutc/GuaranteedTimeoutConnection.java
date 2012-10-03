@@ -3,6 +3,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
+
+import com.project.gtimeoutc.Exceptions.WrongModeException;
+import com.project.gtimeoutc.callbacks.InputStreamCallback;
+import com.project.gtimeoutc.callbacks.OpenConnectionCallback;
+
 import android.os.Handler;
 /**
  * @author Noah Seidman
