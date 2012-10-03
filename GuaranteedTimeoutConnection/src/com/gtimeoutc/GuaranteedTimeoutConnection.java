@@ -15,7 +15,7 @@ public class GuaranteedTimeoutConnection
     private int mMilliseconds;
     private Thread mOpenConnectionThread;
     private boolean mUseSSL;
-    private Handler mHandler = new Handler();
+    private Handler mUiHandler;
     private HttpURLConnection mHttpUrlConnection;
     private HttpsURLConnection mHttpsUrlConnection;
     private Runnable mTimeoutRunnable = new Runnable()
@@ -31,20 +31,32 @@ public class GuaranteedTimeoutConnection
      * This wrapper creates an HttpURLConnection with or without SSL; use the
      * withSSL boolean in the constructor to specify. You can modify the
      * HttpsURLConnection using the respective get method, clearly if you want
-     * to specify a custom socket factory this is needed. Be cautious that the
-     * constructor creates a Handler so either call the constructor from the UI
-     * thread or use Looper properly.
+     * to specify a custom socket factory this is needed. Be cautious that if
+     * you pass null as the uiHandler param a handler will be created; if
+     * passing null please call the constructor from the ui thread, or use
+     * Looper properly. You can also pass a handler for the ui if desired to
+     * construct this not in the ui thread.
      * 
      * @param milliseconds
      *            Specify your guaranteed timeout.
      * @param useSSL
      *            Specify if SSL will be used.
+     * @param uiHandler
+     *            Provide null and a handler will be created, or pass a handler for the ui thread if desired.
      */
-    public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL)
+    public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL, Handler uiHandler)
     {
 	System.setProperty("http.keepAlive", "false");
 	mMilliseconds = milliseconds;
 	mUseSSL = useSSL;
+	if (uiHandler == null)
+	{
+	    mUiHandler = new Handler();
+	}
+	else
+	{
+	    mUiHandler = uiHandler;
+	}
     }
     /**
      * Return the HttpURLConnection
@@ -83,11 +95,12 @@ public class GuaranteedTimeoutConnection
      * @param url
      *            Supply the url for the connection.
      * @param connectionTimeoutRemainsAfterInputStreamReturned
-     *            Should the timeout occur even after the input stream is returned?
+     *            Should the timeout occur even after the input stream is
+     *            returned?
      */
     public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url, final boolean connectionTimeoutRemainsAfterInputStreamReturned)
     {
-	mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
+	mUiHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
 	mOpenConnectionThread = new Thread()
 	{
 	    @Override
@@ -106,7 +119,7 @@ public class GuaranteedTimeoutConnection
 			mHttpUrlConnection.connect();
 		    }
 		    if (!connectionTimeoutRemainsAfterInputStreamReturned)
-			mHandler.removeCallbacks(mTimeoutRunnable);
+			mUiHandler.removeCallbacks(mTimeoutRunnable);
 		    final InputStream in;
 		    if (mUseSSL)
 		    {
@@ -116,7 +129,7 @@ public class GuaranteedTimeoutConnection
 		    {
 			in = mHttpUrlConnection.getInputStream();
 		    }
-		    mHandler.post(new Runnable()
+		    mUiHandler.post(new Runnable()
 		    {
 			@Override
 			public void run()
@@ -127,7 +140,7 @@ public class GuaranteedTimeoutConnection
 		}
 		catch (final Exception e)
 		{
-		    mHandler.post(new Runnable()
+		    mUiHandler.post(new Runnable()
 		    {
 			@Override
 			public void run()
@@ -154,11 +167,12 @@ public class GuaranteedTimeoutConnection
      * @param url
      *            Supply the url for the connection.
      * @param connectionTimeoutRemainsAfterConnected
-     *            Should the timeout occur even after the connect is established?
+     *            Should the timeout occur even after the connect is
+     *            established?
      */
     public void openConnection(final OpenConnectionCallback openConnectionCallback, final URL url, final boolean connectionTimeoutRemainsAfterConnected)
     {
-	mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
+	mUiHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
 	mOpenConnectionThread = new Thread()
 	{
 	    @Override
@@ -177,8 +191,8 @@ public class GuaranteedTimeoutConnection
 			mHttpUrlConnection.connect();
 		    }
 		    if (!connectionTimeoutRemainsAfterConnected)
-			mHandler.removeCallbacks(mTimeoutRunnable);
-		    mHandler.post(new Runnable()
+			mUiHandler.removeCallbacks(mTimeoutRunnable);
+		    mUiHandler.post(new Runnable()
 		    {
 			@Override
 			public void run()
@@ -189,7 +203,7 @@ public class GuaranteedTimeoutConnection
 		}
 		catch (final Exception e)
 		{
-		    mHandler.post(new Runnable()
+		    mUiHandler.post(new Runnable()
 		    {
 			@Override
 			public void run()
