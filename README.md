@@ -10,15 +10,16 @@ InputStreamCallback inputStreamCallback = new InputStreamCallback()<br>
 {
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; @Override<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void getInputStream(InputStream inputStream, Exception exception)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void getInputStream(InputStream inputStream, Exception exception, Handler uiHandler)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
 };<br>
 gtc.getInputStream(inputStreamCallback, new URL("http://www.google.com");<br><br>
-The constructor takes two params:
+The constructor takes three params:
 <br>
 1) Timeout; an integer values in milliseconds.<br>
-2) useSSL; a boolean that will either utilize HttpURLConnection or HttpsURLConnection respectively.
+2) useSSL; a boolean that will either utilize HttpURLConnection or HttpsURLConnection respectively.<br>
+3) uiHandler; pass null and the constructor will create a handler, or pass in a handler to the ui if available.
 <br><br>
 There's 4 public methods:
 <br>
@@ -35,7 +36,7 @@ within the specified timeout a standard SocketException/IOException gets returne
 After the callback is hit in the openConnection method, you'll likely want a reference to the URLConnection which can be retrieved using one of the available public getters.<br><br>
 
 <b>Warnings</b><br>
-Be cautios that the constructor creates a handler! Make sure you either call the constructor from the UI thread, or use Looper properly.
+Be cautios that the constructor creates a handler if not provided one! If you pass null as the uiHandler param make sure you either call the constructor from the UI thread, or use Looper properly.
 
 <B> COPYRIGHT </B>
 
