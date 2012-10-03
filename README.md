@@ -26,9 +26,11 @@ There's 4 public methods:
 <br>
 2) A getter to retrieve the HttpsURLConnection reference.
 <br>
-3) A convenient method to get an inputStream on a supplied URL. Provide an InputStreamCallback and the URL to connect to.
+3) A convenient method to get an inputStream on a supplied URL. Provide an InputStreamCallback and the URL to connect to. If an input stream
+is not returned within the specified timeut a standard SocketException/IOException gets returned in the callback.
 <br>
-4) A convenient method to open the connection. Supply OpenConnectionCallback and the URL to connect to.
+4) A convenient method to open the connection. Supply OpenConnectionCallback and the URL to connect to. If a connection is not opened 
+within the specified timeout a standard SocketException/IOException gets returned in the callback.
 <br><br>
 After the callback is hit in the openConnection method, you'll likely want a reference to the URLConnection which can be retrieved using one of the available public getters.<br><br>
 
