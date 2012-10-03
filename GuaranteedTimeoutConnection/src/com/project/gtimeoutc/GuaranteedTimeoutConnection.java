@@ -22,12 +22,12 @@ public class GuaranteedTimeoutConnection
     private HttpsURLConnection mHttpsUrlConnection;
     private Runnable mTimeoutRunnable = new Runnable()
     {
-	@Override
-	public void run()
-	{
-	    mHttpUrlConnection.disconnect();
-	    mOpenConnectionThread.interrupt();
-	}
+    	@Override
+    	public void run()
+    	{
+    		mHttpUrlConnection.disconnect();
+    		mOpenConnectionThread.interrupt();
+    	}
     };
     /**
      * This library creates an HttpURLConnection with or without SSL; use the
