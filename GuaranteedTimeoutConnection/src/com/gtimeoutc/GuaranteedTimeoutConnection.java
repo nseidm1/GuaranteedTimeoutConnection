@@ -43,7 +43,9 @@ public class GuaranteedTimeoutConnection
      *            Specify if SSL will be used.
      * @param uiHandler
      *            Provide null and a handler will be created, or pass a handler
-     *            for the ui thread if desired.
+     *            for the ui thread if desired. If you pass null make sure this
+     *            constructor is called from the ui thread or Looper is used
+     *            properly.
      */
     public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL, Handler uiHandler)
     {
