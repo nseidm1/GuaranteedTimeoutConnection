@@ -119,25 +119,12 @@ public class GuaranteedTimeoutConnection {
 						}
 					});
 				} catch (final Exception e) {
-					if (e instanceof InterruptedException) {
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								inputStreamCallback
-										.getInputStream(
-												null,
-												new GuaranteedTimeoutException(
-														"Hard interrupt retrieving the input stream."));
-							}
-						});
-					} else {
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								inputStreamCallback.getInputStream(null, e);
-							}
-						});
-					}
+					mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							inputStreamCallback.getInputStream(null, e);
+						}
+					});
 				}
 			}
 		};
@@ -182,26 +169,13 @@ public class GuaranteedTimeoutConnection {
 						}
 					});
 				} catch (final Exception e) {
-					if (e instanceof InterruptedException) {
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								openConnectionCallback
-										.connectionOpened(
-												false,
-												new GuaranteedTimeoutException(
-														"Hard interrupt opening the connection."));
-							}
-						});
-					} else {
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								openConnectionCallback.connectionOpened(false,
-										e);
-							}
-						});
-					}
+					mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							openConnectionCallback.connectionOpened(false,
+									e);
+						}
+					});
 				}
 			}
 		};
