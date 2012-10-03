@@ -1,15 +1,16 @@
 package com.project.gtimeoutc;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import javax.net.ssl.HttpsURLConnection;
+
+import android.os.Handler;
 
 import com.project.gtimeoutc.Exceptions.WrongModeException;
 import com.project.gtimeoutc.callbacks.InputStreamCallback;
 import com.project.gtimeoutc.callbacks.OpenConnectionCallback;
-
-import android.os.Handler;
 
 /**
  * @author Noah Seidman
@@ -104,19 +105,26 @@ public class GuaranteedTimeoutConnection {
 						mHttpUrlConnection.connect();
 					}
 					mHandler.removeCallbacks(mTimeoutRunnable);
+					final InputStream in;
 					if (mUseSSL) {
-						inputStreamCallback.getInputStream(
-								mHttpsUrlConnection.getInputStream(), null);
+						in = mHttpsUrlConnection.getInputStream();
 					} else {
-						inputStreamCallback.getInputStream(
-								mHttpUrlConnection.getInputStream(), null);
+						in = mHttpUrlConnection.getInputStream();
 					}
-				} catch (IOException e) {
-					inputStreamCallback.getInputStream(null, e);
-				} catch (NullPointerException e) {
-					inputStreamCallback.getInputStream(null, e);
-				} catch (Exception e) {
-					inputStreamCallback.getInputStream(null, e);
+					mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							inputStreamCallback.getInputStream(in, null);
+						}
+					});
+				} catch (final Exception e) {
+					e.printStackTrace();
+					mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							inputStreamCallback.getInputStream(null, e);
+						}
+					});
 				}
 			}
 		};
@@ -154,9 +162,19 @@ public class GuaranteedTimeoutConnection {
 						mHttpUrlConnection.connect();
 					}
 					mHandler.removeCallbacks(mTimeoutRunnable);
-					openConnectionCallback.connectionOpened(true);
+					mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							openConnectionCallback.connectionOpened(true);
+						}
+					});
 				} catch (Exception e) {
-					openConnectionCallback.connectionOpened(false);
+					mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							openConnectionCallback.connectionOpened(false);
+						}
+					});
 				}
 			}
 		};
