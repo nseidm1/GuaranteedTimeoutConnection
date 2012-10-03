@@ -29,20 +29,21 @@ public class GuaranteedTimeoutConnection
     };
     /**
      * This wrapper creates an HttpURLConnection with or without SSL; use the
-     * withSSL boolean in the constructor to specify. You can modify the
-     * HttpsURLConnection using the respective get method, clearly if you want
-     * to specify a custom socket factory this is needed. Be cautious that if
-     * you pass null as the uiHandler param a handler will be created; if
-     * passing null please call the constructor from the ui thread, or use
-     * Looper properly. You can also pass a handler for the ui if desired to
-     * construct this not in the ui thread.
+     * withSSL boolean in the constructor to specify use of HttpsURLConnection.
+     * You can modify the HttpsURLConnection using the respective get method,
+     * clearly if you want to specify a custom socket factory this is needed. Be
+     * cautious that if you pass null as the uiHandler param a handler will be
+     * created; if passing null please call the constructor from the ui thread,
+     * or use Looper properly. You can also pass a handler for the ui if desired
+     * to construct this not in the ui thread.
      * 
      * @param milliseconds
      *            Specify your guaranteed timeout.
      * @param useSSL
      *            Specify if SSL will be used.
      * @param uiHandler
-     *            Provide null and a handler will be created, or pass a handler for the ui thread if desired.
+     *            Provide null and a handler will be created, or pass a handler
+     *            for the ui thread if desired.
      */
     public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL, Handler uiHandler)
     {
