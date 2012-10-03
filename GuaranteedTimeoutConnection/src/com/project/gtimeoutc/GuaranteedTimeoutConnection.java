@@ -70,7 +70,7 @@ public class GuaranteedTimeoutConnection {
 	 *             WrongModeException
 	 */
 	public HttpURLConnection getHttpsURLConnection() throws WrongModeException {
-		if (mUseSSL)
+		if (!mUseSSL)
 			throw new WrongModeException(
 					"You specied useSSL (false) as a param in the constructor");
 		return mHttpsUrlConnection;
