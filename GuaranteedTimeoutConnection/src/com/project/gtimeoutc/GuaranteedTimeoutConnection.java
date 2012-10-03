@@ -8,6 +8,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import android.os.Handler;
 
+import com.project.gtimeoutc.Exceptions.GuaranteedTimeoutException;
 import com.project.gtimeoutc.Exceptions.WrongModeException;
 import com.project.gtimeoutc.callbacks.InputStreamCallback;
 import com.project.gtimeoutc.callbacks.OpenConnectionCallback;
@@ -118,13 +119,25 @@ public class GuaranteedTimeoutConnection {
 						}
 					});
 				} catch (final Exception e) {
-					e.printStackTrace();
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							inputStreamCallback.getInputStream(null, e);
-						}
-					});
+					if (e instanceof InterruptedException) {
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								inputStreamCallback
+										.getInputStream(
+												null,
+												new GuaranteedTimeoutException(
+														"Hard interrupt retrieving the input stream."));
+							}
+						});
+					} else {
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								inputStreamCallback.getInputStream(null, e);
+							}
+						});
+					}
 				}
 			}
 		};
@@ -165,16 +178,30 @@ public class GuaranteedTimeoutConnection {
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							openConnectionCallback.connectionOpened(true);
+							openConnectionCallback.connectionOpened(true, null);
 						}
 					});
-				} catch (Exception e) {
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							openConnectionCallback.connectionOpened(false);
-						}
-					});
+				} catch (final Exception e) {
+					if (e instanceof InterruptedException) {
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								openConnectionCallback
+										.connectionOpened(
+												false,
+												new GuaranteedTimeoutException(
+														"Hard interrupt opening the connection."));
+							}
+						});
+					} else {
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								openConnectionCallback.connectionOpened(false,
+										e);
+							}
+						});
+					}
 				}
 			}
 		};
