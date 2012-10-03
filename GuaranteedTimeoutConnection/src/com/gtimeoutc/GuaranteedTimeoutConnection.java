@@ -82,6 +82,8 @@ public class GuaranteedTimeoutConnection
      *            return the actual inputStream or null and an exception.
      * @param url
      *            Supply the url for the connection.
+     * @param connectionTimeoutRemainsAfterInputStreamReturned
+     *            Should the timeout occur even after the input stream is returned?
      */
     public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url, final boolean connectionTimeoutRemainsAfterInputStreamReturned)
     {
@@ -151,6 +153,8 @@ public class GuaranteedTimeoutConnection
      *            to the HttpURLConnection.
      * @param url
      *            Supply the url for the connection.
+     * @param connectionTimeoutRemainsAfterConnected
+     *            Should the timeout occur even after the connect is established?
      */
     public void openConnection(final OpenConnectionCallback openConnectionCallback, final URL url, final boolean connectionTimeoutRemainsAfterConnected)
     {
