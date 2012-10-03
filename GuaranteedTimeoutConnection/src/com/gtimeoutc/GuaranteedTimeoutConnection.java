@@ -28,7 +28,7 @@ public class GuaranteedTimeoutConnection
 	}
     };
     /**
-     * This library creates an HttpURLConnection with or without SSL; use the
+     * This wrapper creates an HttpURLConnection with or without SSL; use the
      * withSSL boolean in the constructor to specify. You can modify the
      * HttpsURLConnection using the respective get method, clearly if you want
      * to specify a custom socket factory this is needed. Be cautious that the
