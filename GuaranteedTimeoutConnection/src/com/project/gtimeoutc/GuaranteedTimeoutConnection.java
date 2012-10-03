@@ -15,16 +15,19 @@ import com.project.gtimeoutc.callbacks.OpenConnectionCallback;
 /**
  * @author Noah Seidman
  */
-public class GuaranteedTimeoutConnection {
+public class GuaranteedTimeoutConnection
+{
 	private int mMilliseconds;
 	private Thread mOpenConnectionThread;
 	private boolean mUseSSL;
 	private Handler mHandler = new Handler();
 	private HttpURLConnection mHttpUrlConnection;
 	private HttpsURLConnection mHttpsUrlConnection;
-	private Runnable mTimeoutRunnable = new Runnable() {
+	private Runnable mTimeoutRunnable = new Runnable()
+	{
 		@Override
-		public void run() {
+		public void run()
+		{
 			mHttpUrlConnection.disconnect();
 			mOpenConnectionThread.interrupt();
 		}
@@ -43,7 +46,8 @@ public class GuaranteedTimeoutConnection {
 	 * @param useSSL
 	 *            Specify if SSL will be used.
 	 */
-	public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL) {
+	public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL)
+	{
 		System.setProperty("http.keepAlive", "false");
 		mMilliseconds = milliseconds;
 		mUseSSL = useSSL;
@@ -56,10 +60,10 @@ public class GuaranteedTimeoutConnection {
 	 *             If you specify true as the useSSL mode, this will throw a
 	 *             WrongModeException
 	 */
-	public HttpURLConnection getHttpURLConnection() throws WrongModeException {
+	public HttpURLConnection getHttpURLConnection() throws WrongModeException
+	{
 		if (mUseSSL)
-			throw new WrongModeException(
-					"You specied useSSL (true) as a param in the constructor");
+			throw new WrongModeException("You specied useSSL (true) as a param in the constructor");
 		return mHttpUrlConnection;
 	}
 
@@ -70,10 +74,10 @@ public class GuaranteedTimeoutConnection {
 	 *             If you specify false as the useSSL mode, this will throw a
 	 *             WrongModeException
 	 */
-	public HttpURLConnection getHttpsURLConnection() throws WrongModeException {
+	public HttpURLConnection getHttpsURLConnection() throws WrongModeException
+	{
 		if (!mUseSSL)
-			throw new WrongModeException(
-					"You specied useSSL (false) as a param in the constructor");
+			throw new WrongModeException("You specied useSSL (false) as a param in the constructor");
 		return mHttpsUrlConnection;
 	}
 
@@ -88,39 +92,49 @@ public class GuaranteedTimeoutConnection {
 	 * @param url
 	 *            Supply the url for the connection.
 	 */
-	public void getInputStream(final InputStreamCallback inputStreamCallback,
-			final URL url) {
+	public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url)
+	{
 		mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
-		mOpenConnectionThread = new Thread() {
+		mOpenConnectionThread = new Thread()
+		{
 			@Override
-			public void run() {
-				try {
-					if (mUseSSL) {
-						mHttpsUrlConnection = (HttpsURLConnection) url
-								.openConnection();
+			public void run()
+			{
+				try
+				{
+					if (mUseSSL)
+					{
+						mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
 						mHttpsUrlConnection.connect();
-					} else {
-						mHttpUrlConnection = (HttpURLConnection) url
-								.openConnection();
+					} else
+					{
+						mHttpUrlConnection = (HttpURLConnection) url.openConnection();
 						mHttpUrlConnection.connect();
 					}
 					mHandler.removeCallbacks(mTimeoutRunnable);
 					final InputStream in;
-					if (mUseSSL) {
+					if (mUseSSL)
+					{
 						in = mHttpsUrlConnection.getInputStream();
-					} else {
+					} else
+					{
 						in = mHttpUrlConnection.getInputStream();
 					}
-					mHandler.post(new Runnable() {
+					mHandler.post(new Runnable()
+					{
 						@Override
-						public void run() {
+						public void run()
+						{
 							inputStreamCallback.getInputStream(in, null);
 						}
 					});
-				} catch (final Exception e) {
-					mHandler.post(new Runnable() {
+				} catch (final Exception e)
+				{
+					mHandler.post(new Runnable()
+					{
 						@Override
-						public void run() {
+						public void run()
+						{
 							inputStreamCallback.getInputStream(null, e);
 						}
 					});
@@ -144,35 +158,42 @@ public class GuaranteedTimeoutConnection {
 	 * @param url
 	 *            Supply the url for the connection.
 	 */
-	public void openConnection(
-			final OpenConnectionCallback openConnectionCallback, final URL url) {
+	public void openConnection(final OpenConnectionCallback openConnectionCallback, final URL url)
+	{
 		mHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
-		mOpenConnectionThread = new Thread() {
+		mOpenConnectionThread = new Thread()
+		{
 			@Override
-			public void run() {
-				try {
-					if (mUseSSL) {
-						mHttpsUrlConnection = (HttpsURLConnection) url
-								.openConnection();
+			public void run()
+			{
+				try
+				{
+					if (mUseSSL)
+					{
+						mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
 						mHttpsUrlConnection.connect();
-					} else {
-						mHttpUrlConnection = (HttpURLConnection) url
-								.openConnection();
+					} else
+					{
+						mHttpUrlConnection = (HttpURLConnection) url.openConnection();
 						mHttpUrlConnection.connect();
 					}
 					mHandler.removeCallbacks(mTimeoutRunnable);
-					mHandler.post(new Runnable() {
+					mHandler.post(new Runnable()
+					{
 						@Override
-						public void run() {
+						public void run()
+						{
 							openConnectionCallback.connectionOpened(true, null);
 						}
 					});
-				} catch (final Exception e) {
-					mHandler.post(new Runnable() {
+				} catch (final Exception e)
+				{
+					mHandler.post(new Runnable()
+					{
 						@Override
-						public void run() {
-							openConnectionCallback.connectionOpened(false,
-									e);
+						public void run()
+						{
+							openConnectionCallback.connectionOpened(false, e);
 						}
 					});
 				}
