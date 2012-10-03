@@ -14,7 +14,7 @@ InputStreamCallback inputStreamCallback = new InputStreamCallback()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
 };<br>
-gtc.getInputStream(inputStreamCallback, new URL("http://www.google.com");<br><br>
+gtc.getInputStream(inputStreamCallback, new URL("http://www.google.com", false);<br><br>
 The constructor takes three params:
 <br>
 1) Timeout; an integer values in milliseconds.<br>
