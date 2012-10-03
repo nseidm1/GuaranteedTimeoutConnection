@@ -8,7 +8,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import android.os.Handler;
 
-import com.project.gtimeoutc.Exceptions.GuaranteedTimeoutException;
 import com.project.gtimeoutc.Exceptions.WrongModeException;
 import com.project.gtimeoutc.callbacks.InputStreamCallback;
 import com.project.gtimeoutc.callbacks.OpenConnectionCallback;
