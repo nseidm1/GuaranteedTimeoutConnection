@@ -121,8 +121,6 @@ public class GuaranteedTimeoutConnection
 			mHttpUrlConnection = (HttpURLConnection) url.openConnection();
 			mHttpUrlConnection.connect();
 		    }
-		    if (!connectionTimeoutRemainsAfterInputStreamReturned)
-			mUiHandler.removeCallbacks(mTimeoutRunnable);
 		    final InputStream in;
 		    if (mUseSSL)
 		    {
@@ -132,6 +130,8 @@ public class GuaranteedTimeoutConnection
 		    {
 			in = mHttpUrlConnection.getInputStream();
 		    }
+		    if (!connectionTimeoutRemainsAfterInputStreamReturned)
+			mUiHandler.removeCallbacks(mTimeoutRunnable);
 		    mUiHandler.post(new Runnable()
 		    {
 			@Override
