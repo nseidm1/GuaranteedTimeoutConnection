@@ -71,7 +71,7 @@ public class GuaranteedTimeoutConnection
     public HttpURLConnection getHttpURLConnection() throws WrongModeException
     {
 	if (mUseSSL)
-	    throw new WrongModeException("You specied useSSL (true) as a param in the constructor");
+	    throw new WrongModeException("You specified useSSL (true) as a param in the constructor");
 	return mHttpUrlConnection;
     }
     /**
@@ -84,7 +84,7 @@ public class GuaranteedTimeoutConnection
     public HttpURLConnection getHttpsURLConnection() throws WrongModeException
     {
 	if (!mUseSSL)
-	    throw new WrongModeException("You specied useSSL (false) as a param in the constructor");
+	    throw new WrongModeException("You specified useSSL (false) as a param in the constructor");
 	return mHttpsUrlConnection;
     }
     /**
