@@ -1,4 +1,4 @@
-package com.project.gtimeoutc.callbacks;
+package com.gtimeoutc.callbacks;
 
 import java.io.InputStream;
 

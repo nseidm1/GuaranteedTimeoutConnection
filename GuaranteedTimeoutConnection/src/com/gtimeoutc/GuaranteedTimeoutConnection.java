@@ -1,4 +1,4 @@
-package com.project.gtimeoutc;
+package com.gtimeoutc;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -8,9 +8,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 import android.os.Handler;
 
-import com.project.gtimeoutc.Exceptions.WrongModeException;
-import com.project.gtimeoutc.callbacks.InputStreamCallback;
-import com.project.gtimeoutc.callbacks.OpenConnectionCallback;
+import com.gtimeoutc.Exceptions.WrongModeException;
+import com.gtimeoutc.callbacks.InputStreamCallback;
+import com.gtimeoutc.callbacks.OpenConnectionCallback;
 
 /**
  * @author Noah Seidman

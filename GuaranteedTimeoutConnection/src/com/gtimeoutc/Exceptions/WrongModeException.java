@@ -1,4 +1,4 @@
-package com.project.gtimeoutc.Exceptions;
+package com.gtimeoutc.Exceptions;
 
 public class WrongModeException extends Exception
 {
