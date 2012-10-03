@@ -103,7 +103,7 @@ public class GuaranteedTimeoutConnection
      */
     public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url, final boolean connectionTimeoutRemainsAfterInputStreamReturned)
     {
-	postTimeoutHandler();
+	postTimeoutRunnable();
 	mOpenConnectionThread = new Thread()
 	{
 	    @Override
@@ -175,7 +175,7 @@ public class GuaranteedTimeoutConnection
      */
     public void openConnection(final OpenConnectionCallback openConnectionCallback, final URL url, final boolean connectionTimeoutRemainsAfterConnected)
     {
-	postTimeoutHandler();
+	postTimeoutRunnable();
 	mOpenConnectionThread = new Thread()
 	{
 	    @Override
@@ -219,7 +219,7 @@ public class GuaranteedTimeoutConnection
 	};
 	mOpenConnectionThread.start();
     }
-    private void postTimeoutHandler()
+    private void postTimeoutRunnable()
     {
 	mUiHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
     }
