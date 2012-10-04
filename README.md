@@ -10,7 +10,7 @@ InputStreamCallback inputStreamCallback = new InputStreamCallback()<br>
 {
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; @Override<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void getInputStream(InputStream inputStream, Exception exception, Handler uiHandler)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void getInputStream(InputStream inputStream, Exception exception)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
 };<br>
