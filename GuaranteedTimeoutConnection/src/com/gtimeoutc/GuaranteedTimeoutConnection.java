@@ -1,4 +1,5 @@
 package com.gtimeoutc;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -7,26 +8,25 @@ import android.os.Handler;
 import com.gtimeoutc.Exceptions.WrongModeException;
 import com.gtimeoutc.callbacks.InputStreamCallback;
 import com.gtimeoutc.callbacks.OpenConnectionCallback;
+
 /**
  * @author Noah Seidman
  */
-public class GuaranteedTimeoutConnection
-{
-    private int mMilliseconds;
-    private Thread mOpenConnectionThread;
-    private boolean mUseSSL;
-    private Handler mUiHandler;
-    private HttpURLConnection mHttpUrlConnection;
+public class GuaranteedTimeoutConnection {
+    private int                mMilliseconds;
+    private Thread             mOpenConnectionThread;
+    private boolean            mUseSSL;
+    private Handler            mUiHandler;
+    private HttpURLConnection  mHttpUrlConnection;
     private HttpsURLConnection mHttpsUrlConnection;
-    private Runnable mTimeoutRunnable = new Runnable()
-    {
+    private Runnable           mTimeoutRunnable = new Runnable(){
 	@Override
-	public void run()
-	{
+	public void run(){
 	    mHttpUrlConnection.disconnect();
 	    mOpenConnectionThread.interrupt();
 	}
     };
+
     /**
      * This wrapper creates an HttpURLConnection with or without SSL; use the
      * withSSL boolean in the constructor to specify use of HttpsURLConnection.
@@ -47,20 +47,19 @@ public class GuaranteedTimeoutConnection
      *            constructor is called from the ui thread or Looper is used
      *            properly.
      */
-    public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL, Handler uiHandler)
-    {
+    public GuaranteedTimeoutConnection(int     milliseconds, 
+	    			       boolean useSSL, 
+	    			       Handler uiHandler){
 	System.setProperty("http.keepAlive", "false");
 	mMilliseconds = milliseconds;
 	mUseSSL = useSSL;
-	if (uiHandler == null)
-	{
+	if (uiHandler == null){
 	    mUiHandler = new Handler();
-	}
-	else
-	{
+	}else{
 	    mUiHandler = uiHandler;
 	}
     }
+
     /**
      * Return the HttpURLConnection
      * 
@@ -68,12 +67,12 @@ public class GuaranteedTimeoutConnection
      *             If you specify true as the useSSL mode, this will throw a
      *             WrongModeException
      */
-    public HttpURLConnection getHttpURLConnection() throws WrongModeException
-    {
+    public HttpURLConnection getHttpURLConnection() throws WrongModeException{
 	if (mUseSSL)
 	    throw new WrongModeException("You specified useSSL (true) as a param in the constructor");
 	return mHttpUrlConnection;
     }
+
     /**
      * Return the HttpsURLConnection
      * 
@@ -81,12 +80,12 @@ public class GuaranteedTimeoutConnection
      *             If you specify false as the useSSL mode, this will throw a
      *             WrongModeException
      */
-    public HttpURLConnection getHttpsURLConnection() throws WrongModeException
-    {
+    public HttpURLConnection getHttpsURLConnection() throws WrongModeException{
 	if (!mUseSSL)
 	    throw new WrongModeException("You specified useSSL (false) as a param in the constructor");
 	return mHttpsUrlConnection;
     }
+
     /**
      * This method creates a thread and posts to the supplied callback instead
      * of returning the inputStream directly from the method; please consider
@@ -101,53 +100,41 @@ public class GuaranteedTimeoutConnection
      *            Should the timeout occur even after the input stream is
      *            returned?
      */
-    public void getInputStream(final InputStreamCallback inputStreamCallback, final URL url, final boolean connectionTimeoutRemainsAfterInputStreamReturned)
-    {
+    public void getInputStream(final InputStreamCallback inputStreamCallback,
+	    		       final URL 		 url,
+	    		       final boolean 		 connectionTimeoutRemainsAfterInputStreamReturned){
 	postTimeoutRunnable();
-	mOpenConnectionThread = new Thread()
-	{
+	mOpenConnectionThread = new Thread(){
 	    @Override
-	    public void run()
-	    {
-		try
-		{
-		    if (mUseSSL)
-		    {
-			mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
+	    public void run(){
+		try{
+		    if (mUseSSL){
+			mHttpsUrlConnection = (HttpsURLConnection) url
+				.openConnection();
 			mHttpsUrlConnection.connect();
-		    }
-		    else
-		    {
-			mHttpUrlConnection = (HttpURLConnection) url.openConnection();
+		    } else{
+			mHttpUrlConnection = (HttpURLConnection) url
+				.openConnection();
 			mHttpUrlConnection.connect();
 		    }
 		    final InputStream in;
-		    if (mUseSSL)
-		    {
+		    if (mUseSSL){
 			in = mHttpsUrlConnection.getInputStream();
-		    }
-		    else
-		    {
+		    }else{
 			in = mHttpUrlConnection.getInputStream();
 		    }
 		    if (!connectionTimeoutRemainsAfterInputStreamReturned)
 			mUiHandler.removeCallbacks(mTimeoutRunnable);
-		    mUiHandler.post(new Runnable()
-		    {
+		    mUiHandler.post(new Runnable(){
 			@Override
-			public void run()
-			{
+			public void run(){
 			    inputStreamCallback.getInputStream(in, null);
 			}
 		    });
-		}
-		catch (final Exception e)
-		{
-		    mUiHandler.post(new Runnable()
-		    {
+		}catch (final Exception e){
+		    mUiHandler.post(new Runnable(){
 			@Override
-			public void run()
-			{
+			public void run(){
 			    inputStreamCallback.getInputStream(null, e);
 			}
 		    });
@@ -156,6 +143,7 @@ public class GuaranteedTimeoutConnection
 	};
 	mOpenConnectionThread.start();
     }
+
     /**
      * 
      * This method creates a thread and posts to the supplied callback instead
@@ -173,44 +161,33 @@ public class GuaranteedTimeoutConnection
      *            Should the timeout occur even after the connect is
      *            established?
      */
-    public void openConnection(final OpenConnectionCallback openConnectionCallback, final URL url, final boolean connectionTimeoutRemainsAfterConnected)
-    {
+    public void openConnection(final OpenConnectionCallback openConnectionCallback, 
+	    		       final URL 		    url,
+	    		       final boolean 		    connectionTimeoutRemainsAfterConnected){
 	postTimeoutRunnable();
-	mOpenConnectionThread = new Thread()
-	{
+	mOpenConnectionThread = new Thread(){
 	    @Override
-	    public void run()
-	    {
-		try
-		{
-		    if (mUseSSL)
-		    {
+	    public void run(){
+		try {
+		    if (mUseSSL){
 			mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
 			mHttpsUrlConnection.connect();
-		    }
-		    else
-		    {
+		    }else{
 			mHttpUrlConnection = (HttpURLConnection) url.openConnection();
 			mHttpUrlConnection.connect();
 		    }
 		    if (!connectionTimeoutRemainsAfterConnected)
 			mUiHandler.removeCallbacks(mTimeoutRunnable);
-		    mUiHandler.post(new Runnable()
-		    {
+		    mUiHandler.post(new Runnable(){
 			@Override
-			public void run()
-			{
+			public void run(){
 			    openConnectionCallback.connectionOpened(true, null);
 			}
 		    });
-		}
-		catch (final Exception e)
-		{
-		    mUiHandler.post(new Runnable()
-		    {
+		}catch (final Exception e){
+		    mUiHandler.post(new Runnable(){
 			@Override
-			public void run()
-			{
+			public void run(){
 			    openConnectionCallback.connectionOpened(false, e);
 			}
 		    });
@@ -219,8 +196,8 @@ public class GuaranteedTimeoutConnection
 	};
 	mOpenConnectionThread.start();
     }
-    private void postTimeoutRunnable()
-    {
+
+    private void postTimeoutRunnable(){
 	mUiHandler.postDelayed(mTimeoutRunnable, mMilliseconds);
     }
 }
