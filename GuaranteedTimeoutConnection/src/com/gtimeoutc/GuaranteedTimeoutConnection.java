@@ -5,7 +5,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import android.os.Handler;
-import com.gtimeoutc.Exceptions.WrongModeException;
 import com.gtimeoutc.callbacks.InputStreamCallback;
 import com.gtimeoutc.callbacks.OpenConnectionCallback;
 
@@ -55,32 +54,6 @@ public class GuaranteedTimeoutConnection {
 	if (uiHandler == null) 
 	    throw new NullPointerException("Pass a handler to the UI thread");
 	mUiHandler    = uiHandler;
-    }
-
-    /**
-     * Return the HttpURLConnection
-     * 
-     * @throws WrongModeException
-     *             If you specify true as the useSSL mode, this will throw a
-     *             WrongModeException
-     */
-    public HttpURLConnection getHttpURLConnection() throws WrongModeException{
-	if (mUseSSL)
-	    throw new WrongModeException("You specified useSSL (true) as a param in the constructor");
-	return mHttpUrlConnection;
-    }
-
-    /**
-     * Return the HttpsURLConnection
-     * 
-     * @throws WrongModeException
-     *             If you specify false as the useSSL mode, this will throw a
-     *             WrongModeException
-     */
-    public HttpURLConnection getHttpsURLConnection() throws WrongModeException{
-	if (!mUseSSL)
-	    throw new WrongModeException("You specified useSSL (false) as a param in the constructor");
-	return mHttpsUrlConnection;
     }
 
     /**
@@ -143,9 +116,8 @@ public class GuaranteedTimeoutConnection {
 
     /**
      * 
-     * This method creates a thread and posts to the supplied callback instead
-     * of returning the inputStream; please consider this during your
-     * development.
+     * This method creates a thread and posts the URLConnection to the supplied callback 
+     * instead of returning the inputStream.
      * 
      * @param openConnectionCallback
      *            The OpenConnectionCallback will always be called. It will pass
@@ -168,22 +140,28 @@ public class GuaranteedTimeoutConnection {
 		try {
 		    if (mUseSSL){
 			mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
+			mUiHandler.post(new Runnable(){
+			    @Override
+			    public void run(){
+				openConnectionCallback.connectionOpened(mTAG, mHttpsUrlConnection, null);
+			    }
+			});
 		    }else{
 			mHttpUrlConnection = (HttpURLConnection) url.openConnection();
+			mUiHandler.post(new Runnable(){
+			    @Override
+			    public void run(){
+				openConnectionCallback.connectionOpened(mTAG, mHttpUrlConnection, null);
+			    }
+			});
 		    }
 		    if (!connectionTimeoutRemainsAfterConnected)
 			mUiHandler.removeCallbacks(mTimeoutRunnable);
-		    mUiHandler.post(new Runnable(){
-			@Override
-			public void run(){
-			    openConnectionCallback.connectionOpened(mTAG, true, null);
-			}
-		    });
 		}catch (final Exception e){
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    openConnectionCallback.connectionOpened(mTAG, false, e);
+			    openConnectionCallback.connectionOpened(mTAG, null, e);
 			}
 		    });
 		}
