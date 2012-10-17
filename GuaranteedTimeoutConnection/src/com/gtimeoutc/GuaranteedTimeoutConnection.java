@@ -16,6 +16,7 @@ public class GuaranteedTimeoutConnection {
     private int                mMilliseconds;
     private Thread             mOpenConnectionThread;
     private boolean            mUseSSL;
+    private String             mTAG;
     private Handler            mUiHandler;
     private HttpURLConnection  mHttpUrlConnection;
     private HttpsURLConnection mHttpsUrlConnection;
@@ -31,33 +32,30 @@ public class GuaranteedTimeoutConnection {
      * This wrapper creates an HttpURLConnection with or without SSL; use the
      * withSSL boolean in the constructor to specify use of HttpsURLConnection.
      * You can modify the HttpsURLConnection using the respective get method,
-     * clearly if you want to specify a custom socket factory this is needed. Be
-     * cautious that if you pass null as the uiHandler param a handler will be
-     * created; if passing null please call the constructor from the ui thread,
-     * or use Looper properly. You can also pass a handler for the ui if desired
-     * to construct this not in the ui thread.
+     * clearly if you want to specify a custom socket factory this is needed.
+     * You must also pass a handler for the ui thread.
      * 
      * @param milliseconds
      *            Specify your guaranteed timeout.
      * @param useSSL
      *            Specify if SSL will be used.
      * @param uiHandler
-     *            Provide null and a handler will be created, or pass a handler
-     *            for the ui thread if desired. If you pass null make sure this
-     *            constructor is called from the ui thread or Looper is used
-     *            properly.
+     *            Pass a handler for the ui thread.
+     * @throws NullPointerException
+     * 		  Throws null pointer if the UI handler is null.
      */
     public GuaranteedTimeoutConnection(int     milliseconds, 
 	    			       boolean useSSL, 
-	    			       Handler uiHandler){
+	    			       Handler uiHandler,
+	    			       String  TAG) throws NullPointerException {
 	System.setProperty("http.keepAlive", "false");
 	mMilliseconds = milliseconds;
-	mUseSSL = useSSL;
-	if (uiHandler == null){
-	    mUiHandler = new Handler();
-	}else{
-	    mUiHandler = uiHandler;
+	mUseSSL       = useSSL;
+	mTAG          = TAG;
+	if (uiHandler == null) {
+	    throw new NullPointerException("Pass a handler to the UI thread");
 	}
+	mUiHandler    = uiHandler;
     }
 
     /**
@@ -128,14 +126,14 @@ public class GuaranteedTimeoutConnection {
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    inputStreamCallback.getInputStream(in, null);
+			    inputStreamCallback.getInputStream(mTAG, in, null);
 			}
 		    });
 		}catch (final Exception e){
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    inputStreamCallback.getInputStream(null, e);
+			    inputStreamCallback.getInputStream(mTAG, null, e);
 			}
 		    });
 		}
@@ -181,14 +179,14 @@ public class GuaranteedTimeoutConnection {
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    openConnectionCallback.connectionOpened(true, null);
+			    openConnectionCallback.connectionOpened(mTAG, true, null);
 			}
 		    });
 		}catch (final Exception e){
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    openConnectionCallback.connectionOpened(false, e);
+			    openConnectionCallback.connectionOpened(mTAG, false, e);
 			}
 		    });
 		}
