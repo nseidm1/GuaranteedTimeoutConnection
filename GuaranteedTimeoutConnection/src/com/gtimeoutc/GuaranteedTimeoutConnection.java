@@ -12,11 +12,10 @@ import com.gtimeoutc.callbacks.OpenConnectionCallback;
  */
 public class GuaranteedTimeoutConnection
 {
-    private int               mMilliseconds;
-    private Thread            mOpenConnectionThread;
-    private boolean           mUseSSL;
-    private String            mTAG;
-    private Handler           mUiHandler;
+    private int mMilliseconds;
+    private Thread mOpenConnectionThread;
+    private boolean mUseSSL;
+    private Handler mUiHandler;
     private HttpURLConnection mHttpUrlConnection;
     private HttpsURLConnection mHttpsUrlConnection;
     private Runnable mTimeoutRunnable = new Runnable()
@@ -32,9 +31,10 @@ public class GuaranteedTimeoutConnection
      * This wrapper creates an HttpURLConnection with or without SSL; use the
      * withSSL boolean in the constructor to specify use of HttpsURLConnection.
      * You can modify the HttpsURLConnection using the respective get method,
-     * clearly if you want to specify a custom socket factory this is needed. 
-     * Please ensure that the handler is for the UI thread. You can also pass 
-     * a handler for the ui if desired
+     * clearly if you want to specify a custom socket factory this is needed. Be
+     * cautious that if you pass null as the uiHandler param a handler will be
+     * created; if passing null please call the constructor from the ui thread,
+     * or use Looper properly. You can also pass a handler for the ui if desired
      * to construct this not in the ui thread.
      * 
      * @param milliseconds
@@ -47,15 +47,19 @@ public class GuaranteedTimeoutConnection
      *            constructor is called from the ui thread or Looper is used
      *            properly.
      */
-    public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL, Handler uiHandler, String TAG) throws NullPointerException
+    public GuaranteedTimeoutConnection(int milliseconds, boolean useSSL, Handler uiHandler)
     {
 	System.setProperty("http.keepAlive", "false");
 	mMilliseconds = milliseconds;
-	mTAG = TAG;
 	mUseSSL = useSSL;
 	if (uiHandler == null)
-	    throw new NullPointerException("UI Handler is null. Please provide a UI Handler.");
-	mUiHandler = uiHandler;
+	{
+	    mUiHandler = new Handler();
+	}
+	else
+	{
+	    mUiHandler = uiHandler;
+	}
     }
     /**
      * Return the HttpURLConnection
@@ -133,7 +137,7 @@ public class GuaranteedTimeoutConnection
 			@Override
 			public void run()
 			{
-			    inputStreamCallback.getInputStream(mTAG, in, null);
+			    inputStreamCallback.getInputStream(in, null);
 			}
 		    });
 		}
@@ -144,7 +148,7 @@ public class GuaranteedTimeoutConnection
 			@Override
 			public void run()
 			{
-			    inputStreamCallback.getInputStream(mTAG, null, e);
+			    inputStreamCallback.getInputStream(null, e);
 			}
 		    });
 		}
@@ -196,7 +200,7 @@ public class GuaranteedTimeoutConnection
 			@Override
 			public void run()
 			{
-			    openConnectionCallback.connectionOpened(mTAG, true, null);
+			    openConnectionCallback.connectionOpened(true, null);
 			}
 		    });
 		}
@@ -207,7 +211,7 @@ public class GuaranteedTimeoutConnection
 			@Override
 			public void run()
 			{
-			    openConnectionCallback.connectionOpened(mTAG, false, e);
+			    openConnectionCallback.connectionOpened(false, e);
 			}
 		    });
 		}
