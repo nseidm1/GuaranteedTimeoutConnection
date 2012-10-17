@@ -5,7 +5,7 @@ GuaranteedTimeoutConnection
 A wrapper class around HttpURLConnection that guarantees a specific timeout. 
 <br><br>
 <b>Example</b><br>
-GuaranteedTimeoutConnection gtc = new GuaranteedTimeoutConnection(30000, false, null);<br>
+GuaranteedTimeoutConnection gtc = new GuaranteedTimeoutConnection("Download123", 30000, false, null);<br>
 InputStreamCallback inputStreamCallback = new InputStreamCallback()<br>
 {
 <br>
