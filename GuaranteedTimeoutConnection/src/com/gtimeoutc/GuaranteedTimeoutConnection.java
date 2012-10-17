@@ -52,9 +52,8 @@ public class GuaranteedTimeoutConnection {
 	mMilliseconds = milliseconds;
 	mUseSSL       = useSSL;
 	mTAG          = TAG;
-	if (uiHandler == null) {
+	if (uiHandler == null) 
 	    throw new NullPointerException("Pass a handler to the UI thread");
-	}
 	mUiHandler    = uiHandler;
     }
 
