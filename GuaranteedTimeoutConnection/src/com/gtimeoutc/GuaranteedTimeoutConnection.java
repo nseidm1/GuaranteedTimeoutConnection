@@ -72,7 +72,7 @@ public class GuaranteedTimeoutConnection {
      */
     public void getInputStream(final InputStreamCallback inputStreamCallback,
 	    		       final URL 		 url,
-	    		       final boolean 		 connectionTimeoutRemainsAfterInputStreamReturned){
+	    		       final boolean 		 connectionTimeoutRemainsAfterCallback){
 	postTimeoutRunnable();
 	mOpenConnectionThread = new Thread(){
 	    @Override
@@ -93,7 +93,7 @@ public class GuaranteedTimeoutConnection {
 		    }else{
 			in = mHttpUrlConnection.getInputStream();
 		    }
-		    if (!connectionTimeoutRemainsAfterInputStreamReturned)
+		    if (!connectionTimeoutRemainsAfterCallback)
 			mUiHandler.removeCallbacks(mTimeoutRunnable);
 		    mUiHandler.post(new Runnable(){
 			@Override
@@ -132,7 +132,7 @@ public class GuaranteedTimeoutConnection {
      */
     public void openConnection(final OpenConnectionCallback openConnectionCallback, 
 	    		       final URL 		    url,
-	    		       final boolean 		    connectionTimeoutRemainsAfterConnected){
+	    		       final boolean 		    connectionTimeoutRemainsAfterCallback){
 	postTimeoutRunnable();
 	mOpenConnectionThread = new Thread(){
 	    @Override
@@ -155,7 +155,7 @@ public class GuaranteedTimeoutConnection {
 			    }
 			});
 		    }
-		    if (!connectionTimeoutRemainsAfterConnected)
+		    if (!connectionTimeoutRemainsAfterCallback)
 			mUiHandler.removeCallbacks(mTimeoutRunnable);
 		}catch (final Exception e){
 		    mUiHandler.post(new Runnable(){
