@@ -168,10 +168,8 @@ public class GuaranteedTimeoutConnection {
 		try {
 		    if (mUseSSL){
 			mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
-			mHttpsUrlConnection.connect();
 		    }else{
 			mHttpUrlConnection = (HttpURLConnection) url.openConnection();
-			mHttpUrlConnection.connect();
 		    }
 		    if (!connectionTimeoutRemainsAfterConnected)
 			mUiHandler.removeCallbacks(mTimeoutRunnable);
