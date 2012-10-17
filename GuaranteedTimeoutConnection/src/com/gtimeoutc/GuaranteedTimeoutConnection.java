@@ -12,14 +12,14 @@ import com.gtimeoutc.callbacks.OpenConnectionCallback;
  */
 public class GuaranteedTimeoutConnection
 {
-    private int                mMilliseconds;
-    private Thread             mOpenConnectionThread;
-    private boolean            mUseSSL;
-    private String             mTAG;
-    private Handler            mUiHandler;
-    private HttpURLConnection  mHttpUrlConnection;
+    private int               mMilliseconds;
+    private Thread            mOpenConnectionThread;
+    private boolean           mUseSSL;
+    private String            mTAG;
+    private Handler           mUiHandler;
+    private HttpURLConnection mHttpUrlConnection;
     private HttpsURLConnection mHttpsUrlConnection;
-    private Runnable 	       mTimeoutRunnable = new Runnable()
+    private Runnable mTimeoutRunnable = new Runnable()
     {
 	@Override
 	public void run()
