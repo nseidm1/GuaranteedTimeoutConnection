@@ -79,12 +79,10 @@ public class GuaranteedTimeoutConnection {
 	    public void run(){
 		try{
 		    if (mUseSSL){
-			mHttpsUrlConnection = (HttpsURLConnection) url
-				.openConnection();
+			mHttpsUrlConnection = (HttpsURLConnection) url.openConnection();
 			mHttpsUrlConnection.connect();
 		    } else{
-			mHttpUrlConnection = (HttpURLConnection) url
-				.openConnection();
+			mHttpUrlConnection = (HttpURLConnection) url.openConnection();
 			mHttpUrlConnection.connect();
 		    }
 		    final InputStream in;
