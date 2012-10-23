@@ -5,20 +5,21 @@ GuaranteedTimeoutConnection
 A wrapper class around HttpURLConnection that guarantees a specific timeout. 
 <br><br>
 <b>Example</b>
-<pre><code>GuaranteedTimeoutConnection gtc = new GuaranteedTimeoutConnection("Download123", 30000, false, new Handler());
+<pre><code>GuaranteedTimeoutConnection gtc = new GuaranteedTimeoutConnection(30000, false, new Handler(), "Download 123");
 InputStreamCallback inputStreamCallback = new InputStreamCallback()
 {
 &nbsp;&nbsp;&nbsp;&nbsp;@Override
-&nbsp;&nbsp;&nbsp;&nbsp;public void getInputStream(InputStream inputStream, Exception exception)
+&nbsp;&nbsp;&nbsp;&nbsp;public void getInputStream(InputStream inputStream, Exception exception, String TAG)
 &nbsp;&nbsp;&nbsp;&nbsp;{
 &nbsp;&nbsp;&nbsp;&nbsp;}
 };
 gtc.getInputStream(inputStreamCallback, new URL("http://www.google.com", false);</code></pre><br><br>
-The constructor takes three params:
+The constructor takes four params:
 <br>
 1) Timeout; an integer values in milliseconds.<br>
 2) useSSL; a boolean that will either utilize HttpURLConnection or HttpsURLConnection respectively.<br>
 3) uiHandler; Pass in a handler to the ui thread.
+4) tag; Pass a tag for identification that is returned in the callback.
 <br><br>
 There's 4 public methods:
 <br>
