@@ -18,7 +18,7 @@ The constructor takes three params:
 <br>
 1) Timeout; an integer values in milliseconds.<br>
 2) useSSL; a boolean that will either utilize HttpURLConnection or HttpsURLConnection respectively.<br>
-3) uiHandler; pass null and the constructor will create a handler, or pass in a handler to the ui if available.
+3) uiHandler; Pass in a handler to the ui thread.
 <br><br>
 There's 4 public methods:
 <br>
