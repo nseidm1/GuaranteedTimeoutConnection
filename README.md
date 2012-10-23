@@ -34,12 +34,7 @@ within the specified timeout a standard SocketException/IOException gets returne
 <br><br>
 After the callback is hit in the openConnection method, you'll likely want a reference to the URLConnection which can be retrieved using one of the available public getters.<br><br>
 
-<b>Warnings</b><br>
-Be cautios that the constructor creates a handler if not provided one! If you pass null as the uiHandler param make sure you either call the constructor from the UI thread, or use Looper properly.
-
-<B> COPYRIGHT </B>
-
-Copyright 2012 Noah Seidman
+<pre><code>Copyright 2012 Noah Seidman
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -51,4 +46,4 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
+limitations under the License.</code></pre>
