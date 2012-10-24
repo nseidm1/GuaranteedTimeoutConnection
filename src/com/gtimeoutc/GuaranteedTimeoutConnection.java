@@ -15,7 +15,6 @@ public class GuaranteedTimeoutConnection {
     private int                mMilliseconds;
     private Thread             mOpenConnectionThread;
     private boolean            mUseSSL;
-    private String             mTAG;
     private Handler            mUiHandler;
     private HttpURLConnection  mHttpUrlConnection;
     private HttpsURLConnection mHttpsUrlConnection;
@@ -45,14 +44,10 @@ public class GuaranteedTimeoutConnection {
      */
     public GuaranteedTimeoutConnection(int     milliseconds, 
 	    			       boolean useSSL, 
-	    			       Handler uiHandler,
-	    			       String  TAG) throws NullPointerException {
+	    			       Handler uiHandler){
 	System.setProperty("http.keepAlive", "false");
 	mMilliseconds = milliseconds;
 	mUseSSL       = useSSL;
-	mTAG          = TAG;
-	if (uiHandler == null) 
-	    throw new NullPointerException("Pass a handler to the UI thread");
 	mUiHandler    = uiHandler;
     }
 
@@ -96,14 +91,14 @@ public class GuaranteedTimeoutConnection {
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    inputStreamCallback.getInputStream(mTAG, in, null);
+			    inputStreamCallback.getInputStream(in, null);
 			}
 		    });
 		}catch (final Exception e){
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    inputStreamCallback.getInputStream(mTAG, null, e);
+			    inputStreamCallback.getInputStream(null, e);
 			}
 		    });
 		}
@@ -141,7 +136,7 @@ public class GuaranteedTimeoutConnection {
 			mUiHandler.post(new Runnable(){
 			    @Override
 			    public void run(){
-				openConnectionCallback.connectionOpened(mTAG, mHttpsUrlConnection, null);
+				openConnectionCallback.connectionOpened(mHttpsUrlConnection, null);
 			    }
 			});
 		    }else{
@@ -149,7 +144,7 @@ public class GuaranteedTimeoutConnection {
 			mUiHandler.post(new Runnable(){
 			    @Override
 			    public void run(){
-				openConnectionCallback.connectionOpened(mTAG, mHttpUrlConnection, null);
+				openConnectionCallback.connectionOpened(mHttpUrlConnection, null);
 			    }
 			});
 		    }
@@ -159,7 +154,7 @@ public class GuaranteedTimeoutConnection {
 		    mUiHandler.post(new Runnable(){
 			@Override
 			public void run(){
-			    openConnectionCallback.connectionOpened(mTAG, null, e);
+			    openConnectionCallback.connectionOpened(null, e);
 			}
 		    });
 		}
