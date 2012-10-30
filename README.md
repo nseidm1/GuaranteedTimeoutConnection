@@ -3,7 +3,7 @@ GuaranteedTimeoutConnection
 <img src="http://mindthis.ca/wp-content/uploads/2011/12/timeout.jpg"/>
 
 A wrapper class around HttpURLConnection that guarantees a specific timeout. 
-<br><br>
+
 <b>Example</b>
 <pre><code>GuaranteedTimeoutConnection gtc = new GuaranteedTimeoutConnection(30000, false, new Handler(), "Download 123");
 InputStreamCallback inputStreamCallback = new InputStreamCallback()
